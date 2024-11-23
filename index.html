@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Favicon Status Demo</title>
+    <link rel="icon" href="/favicon.ico" type="image/x-icon">
+    <link rel="stylesheet" href="./styles/main.css">
+</head>
+<body>
+    <div class="container">
+        <h1 class="title">Vercel Favicon Status Demo</h1>
+        <p class="description">点击按钮来模拟 Vercel 部署状态的变化。观察浏览器标签页的 favicon 变化。</p>
+        <div class="buttons">
+            <button class="status-btn pending-btn" onclick="updateFaviconStatus('pending')">
+                <span class="btn-text">部署中</span>
+            </button>
+            <button class="status-btn success-btn" onclick="updateFaviconStatus('success')">
+                <span class="btn-text">部署成功</span>
+            </button>
+            <button class="status-btn error-btn" onclick="updateFaviconStatus('error')">
+                <span class="btn-text">部署失败</span>
+            </button>
+            <button class="status-btn clear-btn" onclick="updateFaviconStatus('clear')">
+                <span class="btn-text">清除状态</span>
+            </button>
+        </div>
+        <div id="status" class="status"></div>
+    </div>
+    <script type="module">
+        import { FaviconStatus } from './src/core/favicon.ts';
+        
+        window.addEventListener('load', () => {
+            const statusElement = document.getElementById('status');
+            let currentStatus = null;
+            const originalFaviconUrl = '/favicon.ico';
+            
+            const favicon = new FaviconStatus({
+                originalFaviconUrl,
+                size: 32,
+                dotPosition: { x: 24, y: 24 },
+                dotSize: 12
+            });
+
+            window.updateFaviconStatus = (status) => {
+                currentStatus = status;
+                if (status === 'clear') {
+                    const newFavicon = new FaviconStatus({
+                        originalFaviconUrl,
+                        size: 32,
+                        dotPosition: { x: 24, y: 24 },
+                        dotSize: 12
+                    });
+                    statusElement.textContent = '状态已清除';
+                } else {
+                    favicon.updateStatus(status);
+                    statusElement.textContent = `当前状态: ${status}`;
+                }
+                statusElement.className = `status ${status}`;
+            };
+        });
+    </script>
+</body>
+</html>
